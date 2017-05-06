@@ -20,7 +20,7 @@ var app = {
     config: config,
     authCount: 0
 };
-var commands = {};
+var commands = app.commands = {};
 
 function addCommand(cmd) {
     logger.info("adding command %s", cmd.name);

@@ -21,7 +21,7 @@ var init = co.wrap(function *(app) {
     config = app.config.destiny;
 });
 
-var destinyAPI = co.wrap(function* () {
+var destinyAPI = co.wrap(function* (op) {
 
     var args = {
         url: config.url + op,
@@ -32,7 +32,8 @@ var destinyAPI = co.wrap(function* () {
     logger.debug("issuing destiny API cmd: %s", args.url);
     // bit messy - request sends both the response and response.body
     // to the callback, so we have to pick appart the returned array
-    var res = (yield request.get(args))[0];
+    var res = yield request.get(args);
+    //var res = (yield request.get(args))[0];
 
     logger.debug("response code", res.statusCode);
 
@@ -54,31 +55,31 @@ var destinyAPI = co.wrap(function* () {
     }
 });
 
-function stats(type, id) {
+function stats(member) {
     // /Stats/Account/{membershipType}/{destinyMembershipId}/
-    var op = util.format('/Stats/Account/%d/%s/', type, id);
+    var op = util.format('/Stats/Account/%d/%s/', member.membershipType, member.membershipId);
     return destinyAPI(op);
 
 }
 
-function search(type, id) {
+function search(type, name) {
     // /SearchDestinyPlayer/{membershipType}/{displayName}/
 
-    var op = util.format('/SearchDestinyPlayer/%d/%s/', type, id);
+    var op = util.format('/SearchDestinyPlayer/%d/%s/', type, name);
     return destinyAPI(op);
 }
 
-function membership(type, id) {
+function membership(type, name) {
     // /{membershipType}/Stats/GetMembershipIdByDisplayName/{displayName}/
 
-    var op = util.format('/%d/Stats/GetMembershipIdByDisplayName/%s/', type, id);
+    var op = util.format('/%d/Stats/GetMembershipIdByDisplayName/%s/', type, name);
     return destinyAPI(op);
 }
 
-function summary(type, id) {
+function summary(member) {
     // /{membershipType}/Account/{destinyMembershipId}/Summary/	
 
-    var op = util.format('/%d/Account/%s/Summary/', type, id);
+    var op = util.format('/%d/Account/%s/Summary/', member.membershipType, member.membershipId);
     return destinyAPI(op);
 }
 

@@ -5,9 +5,9 @@ var api = require('./api');
 
 module.exports.name = 'stats';
 module.exports.desc = 'Display Destiny stats';
-module.exports.exec = co.wrap(function *stats() {
+module.exports.exec = co.wrap(function *exec(cmd) {
 
-
+    yield cmd.reply("Not implemented yet!");
 });
 
 /*
