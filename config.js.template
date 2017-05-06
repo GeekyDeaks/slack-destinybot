@@ -1,0 +1,11 @@
+'use strict';
+module.exports = {
+    slack: {
+         token: ""
+    },
+    destiny: {
+
+    },
+    commandPrefix: "."
+   
+}

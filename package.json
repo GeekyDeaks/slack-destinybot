@@ -1,0 +1,16 @@
+{
+  "name": "guilty-spark",
+  "version": "1.0.0",
+  "description": "Slack Bungie Bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@slack/client": "^3.9.0",
+    "co": "^4.6.0",
+    "promisify-node": "^0.4.0"
+  }
+}
