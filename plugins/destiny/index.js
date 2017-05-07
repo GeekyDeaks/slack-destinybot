@@ -7,14 +7,11 @@ var init = co.wrap(function *init(app) {
     var api = require('./api');
     yield api.init(app);
 
-    var stats = require('./stats');
-    app.addCommand(stats);
-
-    var summary = require('./summary');
-    app.addCommand(summary);
-
-    var summary = require('./summarya');
-    app.addCommand(summary);
+    app.addCommand(require('./stats'));
+    app.addCommand(require('./summary'));
+    app.addCommand(require('./summarya'));
+    app.addCommand(require('./summaryf'));
+    app.addCommand(require('./lookup'));
 
 });
 

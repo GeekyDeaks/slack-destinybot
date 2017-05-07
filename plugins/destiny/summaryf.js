@@ -8,9 +8,9 @@ var util = require('util');
 var genderType = ['Male', 'Female'];
 var classType = ['Titan', 'Hunter', 'Warlock'];
 
-module.exports.name = 'summarya';
+module.exports.name = 'summaryf';
 module.exports.desc = 'Display Destiny character summary';
-module.exports.alias = [ "suma" ];
+module.exports.alias = [ "sumf" ];
 module.exports.exec = co.wrap(function *exec(cmd) {
 
     var members = yield membership.search(cmd.args[0]);
@@ -43,15 +43,15 @@ var memberSummary = co.wrap(function *memberSummary(msg, member) {
             " / " + member.displayName+" / "+ (c + 1) + " ";
         firstLine += "━".repeat(30 - firstLine.length);
         a.setAuthorName(firstLine);
-        //characterSummary(guardian, c);
-        a.setText("```"+characterSummary(guardian)+"```");
+        characterSummary(a, guardian);
+        //a.setText("```"+characterSummary(guardian)+"```");
         //a.setThumbUrl('https://www.bungie.net'+guardian.emblemPath);
         a.setAuthorIcon('https://www.bungie.net'+guardian.emblemPath);
         msg.addAttachment(a);
     }
 });
 
-function characterSummary(guardian) {
+function characterSummaryOld(guardian, index) {
 
     var response = [];
 
@@ -70,5 +70,18 @@ function characterSummary(guardian) {
 
     return response.join("\n");
 
+}
+
+function characterSummary(attachment, guardian) {
+
+    logger.debug("summary for character ",util.inspect(guardian, {depth: 1}));
+
+    attachment.addField("Guardian", genderType[guardian.characterBase.genderType] + " " +
+            classType[guardian.characterBase.classType]);
+
+    attachment.addField("Level", guardian.characterLevel);
+    attachment.addField("Light", guardian.characterBase.powerLevel);
+    attachment.addField("Hours Played", Math.round( guardian.characterBase.minutesPlayedTotal / 6) / 10);
+    
 }
 

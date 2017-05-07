@@ -6,16 +6,28 @@ var api = require('./api');
 var XBL = 1;
 var PSN = 2;
 
-var search = co.wrap(function *search(name) {
+var search = co.wrap(function *search(name, type) {
+    
+    var mtype = [];
+    if(!type) {
+        // lookup both PSN and XBL
+        mtype.push(XBL);
+        mtype.push(PSN);
+    } else {
+        mtype.push(type);
+    }
+
     logger.debug("looking up [%s] at bungie", name);
     var m;
     var res = [];
-    for(var type = 1; type < 3; type++) {
-        m = yield api.search(type, name);
+    var t;
+    while(t = mtype.shift()) {
+        m = yield api.search(t, name);
         if(!m.length) continue;
         logger.debug("found: ", m);
         m.forEach( m => { res.push(m); });
     }
+
     return res;
 });
 
