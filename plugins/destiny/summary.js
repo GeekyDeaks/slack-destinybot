@@ -11,32 +11,34 @@ var classType = ['Titan', 'Hunter', 'Warlock'];
 module.exports.name = 'summary';
 module.exports.desc = 'Display Destiny character summary';
 module.exports.alias = [ "sum" ];
-module.exports.exec = co.wrap(function *exec(cmd) {
+module.exports.exec = exec;
 
-    var members = yield membership.search(cmd.args[0]);
+async function exec(cmd) {
+
+    var members = await membership.search(cmd.args[0]);
     var r;
     var response = [];
 
     // loop around each member
     for(var m = 0; m < members.length; m++) {
-        response.push(yield memberSummary(members[m]));
+        response.push(await memberSummary(members[m]));
     }
     if(response.length) {
-        yield cmd.reply(response.join("\n"));
+        await cmd.reply(response.join("\n"));
     } else {
-        yield cmd.reply("Sorry, bungie did not know about " + cmd.args[0]);
+        await cmd.reply("Sorry, bungie did not know about " + cmd.args[0]);
     }
 
 
-});
+}
 
-var memberSummary = co.wrap(function *memberSummary(member) {
-    var r = yield api.summary(member);
+async function memberSummary(member) {
+    var r = await api.summary(member);
     var response = [];
     //
     for(var c = 0; c < r.data.characters.length; c++) {
         var guardian = r.data.characters[c];
-        logger.debug("summary for character ",util.inspect(guardian, {depth: 1}));
+        logger.debug("summary for character ",util.inspect(guardian, {depth: 3}));
 
         var firstLine =  
             "━━ "+ membership.name(member.membershipType) +
@@ -49,7 +51,7 @@ var memberSummary = co.wrap(function *memberSummary(member) {
 
     }
     return(response.join("\n"));
-});
+}
 
 function characterSummary(guardian, index) {
 

@@ -1,9 +1,8 @@
 'use strict';
 var logger = require('winston');
-var co = require('co');
 var app;
 
-var init = co.wrap(function *init(a) {
+async function init(a) {
 
     app = a;
     app.addCommand({
@@ -12,10 +11,10 @@ var init = co.wrap(function *init(a) {
         exec: help
     });
 
-});
+}
 
 
-var help = co.wrap(function *help(cmd) {
+async function help(cmd) {
 
     var text = [];
 
@@ -24,9 +23,9 @@ var help = co.wrap(function *help(cmd) {
            text.push(commandHelp(app.commands[c]));
         }
     }
-    yield cmd.reply(text.join("\n"));
+    await cmd.reply(text.join("\n"));
 
-});
+}
 
 
 

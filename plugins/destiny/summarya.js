@@ -1,6 +1,5 @@
 'use strict';
 var logger = require('winston');
-var co = require('co');
 var api = require('./api');
 var membership = require('./membership');
 var util = require('util');
@@ -11,25 +10,26 @@ var classType = ['Titan', 'Hunter', 'Warlock'];
 module.exports.name = 'summarya';
 module.exports.desc = 'Display Destiny character summary';
 module.exports.alias = [ "suma" ];
-module.exports.exec = co.wrap(function *exec(cmd) {
+module.exports.exec = exec;
+async function exec(cmd) {
 
-    var members = yield membership.search(cmd.args[0]);
+    var members = await membership.search(cmd.args[0]);
     var r;
     var msg = cmd.message();
     if(!members.length) {
-        return yield cmd.reply("Sorry, bungie did not know about " + cmd.args[0]);
+        return await cmd.reply("Sorry, bungie did not know about " + cmd.args[0]);
     }
 
     // loop around each member
     for(var m = 0; m < members.length; m++) {
-        yield memberSummary(msg, members[m]);
+        await memberSummary(msg, members[m]);
     }
-    yield cmd.reply(msg);
+    await cmd.reply(msg);
 
-});
+}
 
-var memberSummary = co.wrap(function *memberSummary(msg, member) {
-    var r = yield api.summary(member);
+async function memberSummary(msg, member) {
+    var r = await api.summary(member);
 
     var a;
     //
@@ -49,7 +49,7 @@ var memberSummary = co.wrap(function *memberSummary(msg, member) {
         a.setAuthorIcon('https://www.bungie.net'+guardian.emblemPath);
         msg.addAttachment(a);
     }
-});
+}
 
 function characterSummary(guardian) {
 

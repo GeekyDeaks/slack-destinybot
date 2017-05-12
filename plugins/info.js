@@ -1,10 +1,8 @@
 'use strict';
 var logger = require('winston');
-var co = require('co');
 var app;
 
-
-var init = co.wrap(function *init(a) {
+async function init(a) {
 
     app = a;
     app.addCommand({
@@ -17,9 +15,9 @@ var init = co.wrap(function *init(a) {
         desc: "Display information about the bot",
         exec: infoa
     });
-});
+}
 
-var info = co.wrap(function *info(cmd) {
+async function info(cmd) {
 
     var ds = app.rtm.dataStore;
     var response = [];
@@ -31,11 +29,11 @@ var info = co.wrap(function *info(cmd) {
     response.push("   AuthCount: " + app.authCount);
     response.push("```");
 
-    yield cmd.reply(response.join("\n"));
+    await cmd.reply(response.join("\n"));
 
-});
+}
 
-var infoa = co.wrap(function *info(cmd) {
+async function infoa(cmd) {
 
     var ds = app.rtm.dataStore;
     var response = [];
@@ -50,8 +48,8 @@ var infoa = co.wrap(function *info(cmd) {
     msg.addAttachment(a);
     //msg.setText("info");
 
-    yield cmd.reply(msg);
+    await cmd.reply(msg);
 
-});
+}
 
 module.exports.init = init;

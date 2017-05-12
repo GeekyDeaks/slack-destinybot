@@ -1,14 +1,70 @@
 'use strict';
 var logger = require('winston');
-var co = require('co');
 var api = require('./api');
 
 module.exports.name = 'stats';
 module.exports.desc = 'Display Destiny stats';
-module.exports.exec = co.wrap(function *exec(cmd) {
+module.exports.exec = exec;
 
-    yield cmd.reply("Not implemented yet!");
-});
+async function exec(cmd) {
+
+    var members = await membership.search(cmd.args[0]);
+    var r;
+    var response = [];
+
+    // loop around each member
+    for(var m = 0; m < members.length; m++) {
+        response.push(await memberStats(members[m]));
+    }
+    if(response.length) {
+        await cmd.reply(response.join("\n"));
+    } else {
+        await cmd.reply("Sorry, bungie did not know about " + cmd.args[0]);
+    }
+}
+
+async function stats(member) {
+
+        var stats = await api.stats(type, member.membershipId);
+        if(!stats) return;
+
+        var pve = stats.mergedAllCharacters.results.allPvE.allTime;
+        var pvp = stats.mergedAllCharacters.results.allPvP.allTime;
+
+        var toSend = [];
+        var line = [];
+
+        if (pve) {
+            line[0] = "```" + format;
+            line[1] = "━━ " + membership.name(type) + " / " + m[0].displayName + " / PvE ";
+            line[1] += "━".repeat(40 - line[1].length);
+            line.push("         Time Played: " + pve.secondsPlayed.basic.displayValue);
+            line.push(" Highest Light Level: " + pve.highestLightLevel.basic.displayValue);
+            line.push("                 KPD: " + pve.killsDeathsRatio.basic.displayValue);
+            line.push("     Precision Kills: " + pve.precisionKills.basic.displayValue);
+            line.push("         Best Weapon: " + pve.weaponBestType.basic.displayValue);
+            line.push("```");
+            toSend.push(line.join("\n"));
+        }
+        
+        if (pvp) {
+            line.length = 0;
+            line[0] = "```" + format;
+            line[1] = "━━ " + membership.name(type) + " / " + m[0].displayName + " / PvP ";
+            line[1] += "━".repeat(40 - line[1].length);
+            line.push("         Time Played: " + pvp.secondsPlayed.basic.displayValue);
+            line.push(" Highest Light Level: " + pvp.highestLightLevel.basic.displayValue);
+            line.push("                 KPD: " + pvp.killsDeathsRatio.basic.displayValue);
+            line.push("     Precision Kills: " + pvp.precisionKills.basic.displayValue);
+            line.push("         Best Weapon: " + pvp.weaponBestType.basic.displayValue);
+            line.push("      Win Loss Ratio: " + pvp.winLossRatio.basic.displayValue);
+            line.push("       Longest Spree: " + pvp.longestKillSpree.basic.displayValue);
+            line.push("```");
+            toSend.push(line.join("\n"));            
+
+        }
+        return toSend;
+}
 
 /*
 var co = require('co');

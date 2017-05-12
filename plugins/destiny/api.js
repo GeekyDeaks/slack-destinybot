@@ -1,6 +1,5 @@
 'use strict';
 
-var co = require('co');
 var promisify = require('promisify-node');
 var request = promisify('request');
 
@@ -14,14 +13,14 @@ var logger = require('winston');
 
 var config;
 
-var init = co.wrap(function *(app) {
+async function init(app) {
     if(!app.config.destiny) {
         throw new Error("no bungie config defined");
     }
     config = app.config.destiny;
-});
+}
 
-var destinyAPI = co.wrap(function* (op) {
+async function destinyAPI(op) {
 
     var args = {
         url: config.url + op,
@@ -30,10 +29,8 @@ var destinyAPI = co.wrap(function* (op) {
         }
     };
     logger.debug("issuing destiny API cmd: %s", args.url);
-    // bit messy - request sends both the response and response.body
-    // to the callback, so we have to pick appart the returned array
-    var res = yield request.get(args);
-    //var res = (yield request.get(args))[0];
+
+    var res = await request.get(args);
 
     logger.debug("response code", res.statusCode);
 
@@ -53,7 +50,7 @@ var destinyAPI = co.wrap(function* (op) {
         }
         return (r.Response);
     }
-});
+}
 
 function stats(member) {
     // /Stats/Account/{membershipType}/{destinyMembershipId}/

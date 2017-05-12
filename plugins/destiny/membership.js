@@ -1,12 +1,11 @@
 'use strict';
 var logger = require('winston');
-var co = require('co');
 var api = require('./api');
 
 var XBL = 1;
 var PSN = 2;
 
-var search = co.wrap(function *search(name, type) {
+async function search(name, type) {
     
     var mtype = [];
     if(!type) {
@@ -22,14 +21,14 @@ var search = co.wrap(function *search(name, type) {
     var res = [];
     var t;
     while(t = mtype.shift()) {
-        m = yield api.search(t, name);
+        m = await api.search(t, name);
         if(!m.length) continue;
         logger.debug("found: ", m);
         m.forEach( m => { res.push(m); });
     }
 
     return res;
-});
+}
 
 function name(type) {
     switch(type) {
